@@ -1,89 +1,79 @@
 # Experiment--02-Experiment-1-8086-Architecture-and-Register-Operations
- 
+
 ## Aim
 
-To study the architecture of the 8086 microprocessor and write assembly
-language programs for register-to-register data transfer, memory
-storage, and exchanging two 16-bit memory values.
+To study the architecture of the 8086 microprocessor and write assembly language programs for register-to-register data transfer, memory storage, and exchanging two 16-bit memory values.
 
 ## Learning Outcomes
 
-After completing this experiment, students will be able to: - Explain
-the main functional units of the 8086 microprocessor. - Describe the
-roles of the Bus Interface Unit (BIU) and Execution Unit (EU). - Write
-8086 assembly instructions for 16-bit data transfer. - Exchange data
-between two memory locations using registers.
+After completing this experiment, students will be able to:
+
+- Explain the main functional units of the 8086 microprocessor.
+- Describe the roles of the Bus Interface Unit (BIU) and Execution Unit (EU).
+- Write 8086 assembly instructions for 16-bit data transfer.
+- Exchange data between two memory locations using registers.
 
 ## Software Required
 
--   An 8086 assembly emulator, such as emu8086 or an equivalent
-    8086-compatible emulator.
--   A text editor for writing the assembly programs.
+- An 8086 assembly emulator, such as emu8086 or an equivalent 8086-compatible emulator (EasyCPU 8086 Simulator was used here).
+- A text editor for writing the assembly programs.
 
-------------------------------------------------------------------------
+---
 
 ## Part (a): 8086 Architecture and Functional Units
 
 ### Question
 
-Explain the architecture of the 8086 microprocessor with a neat block
-diagram, describing the functions of the BIU and EU.
+Explain the architecture of the 8086 microprocessor with a neat block diagram, describing the functions of the BIU and EU.
 
 ### Theory
 
-The Intel 8086 is a 16-bit microprocessor with a 16-bit data bus and a
-20-bit address bus. It can address up to 1 MB of physical memory. Its
-architecture is divided into two major units:
+The Intel 8086 is a 16-bit microprocessor with a 16-bit data bus and a 20-bit address bus. It can address up to 1 MB of physical memory. Its architecture is divided into two major units:
 
-**1. Bus Interface Unit (BIU)** - Generates the 20-bit physical
-address. - Fetches instructions from memory. - Reads data from and
-writes data to memory and I/O devices. - Contains the segment registers:
-CS, DS, SS, and ES. - Contains the Instruction Pointer (IP). - Includes
-a 6-byte instruction prefetch queue, allowing instruction fetching and
-execution to overlap.
+**1. Bus Interface Unit (BIU)**
 
-**2. Execution Unit (EU)** - Decodes and executes instructions fetched
-by the BIU. - Contains the Arithmetic Logic Unit (ALU). - Contains
-general-purpose registers AX, BX, CX, and DX, which can be accessed as
-8-bit halves. - Contains pointer and index registers SP, BP, SI, and
-DI. - Contains the Flag Register, which records status and control
-flags. - Requests the BIU to perform memory and I/O transfers when
-required.
+- Generates the 20-bit physical address.
+- Fetches instructions from memory.
+- Reads data from and writes data to memory and I/O devices.
+- Contains the segment registers: CS, DS, SS, and ES.
+- Contains the Instruction Pointer (IP).
+- Includes a 6-byte instruction prefetch queue, allowing instruction fetching and execution to overlap.
+
+**2. Execution Unit (EU)**
+
+- Decodes and executes instructions fetched by the BIU.
+- Contains the Arithmetic Logic Unit (ALU).
+- Contains general-purpose registers AX, BX, CX, and DX, which can be accessed as 8-bit halves.
+- Contains pointer and index registers SP, BP, SI, and DI.
+- Contains the Flag Register, which records status and control flags.
+- Requests the BIU to perform memory and I/O transfers when required.
 
 ### Simplified Block Diagram
 
-<img width="600" height="456" alt="image" src="https://github.com/user-attachments/assets/1d1135ac-67da-4330-8d2a-419d3a170f7a" />
-
-
-
+![8086 BIU and EU block diagram](img/biu_eu_block_diagram.png)
 
 ### Working Principle
 
-The BIU fetches instruction bytes and stores them in its 6-byte queue
-while the EU executes instructions already available in the queue. When
-the EU needs memory or I/O access, it requests the BIU to perform the
-bus operation. A change in program flow, such as a jump, may cause the
-instruction queue to be flushed and refilled.
+The BIU fetches instruction bytes and stores them in its 6-byte queue while the EU executes instructions already available in the queue. When the EU needs memory or I/O access, it requests the BIU to perform the bus operation. A change in program flow, such as a jump, may cause the instruction queue to be flushed and refilled.
 
-------------------------------------------------------------------------
+---
 
 ## Part (b): Transfer a 16-bit Value Between Registers and Store It in Memory
 
 ### Question
 
-Write an 8086 assembly language program to transfer a 16-bit data value
-from one register to another and store the result in memory.
+Write an 8086 assembly language program to transfer a 16-bit data value from one register to another and store the result in memory.
 
 ### Algorithm
 
-1.  Load a 16-bit value into AX.
-2.  Transfer the value from AX to BX.
-3.  Store the value in BX into the memory variable `RESULT`.
-4.  Stop the program.
+1. Load a 16-bit value into AX.
+2. Transfer the value from AX to BX.
+3. Store the value in BX into the memory variable `RESULT`.
+4. Stop the program.
 
 ### Assembly Program
 
-``` asm
+```asm
 .MODEL SMALL
 .STACK 100H
 
@@ -105,83 +95,141 @@ MAIN ENDP
 END MAIN
 ```
 
+Version used in the EasyCPU 8086 simulator (no directives needed; `[0000H]` is the first byte of the data segment, DS = 1000H):
+
+```asm
+MOV AX, 1234H
+MOV BX, AX
+MOV [0000H], BX
+HLT
+```
+
 ### Expected Result
 
--   AX = `1234H`
--   BX = `1234H`
--   RESULT = `1234H`
+- AX = `1234H`
+- BX = `1234H`
+- RESULT = `1234H`
 
 ### Explanation
 
-`MOV BX, AX` copies the 16-bit contents of AX into BX without changing
-AX. `MOV RESULT, BX` stores the contents of BX in the 16-bit memory
-variable `RESULT`. The `MOV` instruction does not modify the source
-operand.
+`MOV BX, AX` copies the 16-bit contents of AX into BX without changing AX. `MOV RESULT, BX` stores the contents of BX in the 16-bit memory variable `RESULT`. The `MOV` instruction does not modify the source operand.
 
-------------------------------------------------------------------------
+The 8086 stores 16-bit values in little-endian order (low byte at the lower address). That is why the memory viewer shows `34 12` at address 1000:0000 for the value 1234H.
+
+---
 
 ## Part (c): Exchange Two 16-bit Memory Locations Using Registers
 
 ### Question
 
-Write an 8086 assembly language program to exchange the contents of two
-16-bit memory locations using registers.
+Write an 8086 assembly language program to exchange the contents of two 16-bit memory locations using registers.
 
 ### Algorithm
 
-1.  Load the first memory value into AX.
-2.  Load the second memory value into BX.
-3.  Store BX at the first memory location.
-4.  Store AX at the second memory location.
-5.  Stop the program.
+1. Load the first memory value into AX.
+2. Load the second memory value into BX.
+3. Store BX at the first memory location.
+4. Store AX at the second memory location.
+5. Stop the program.
 
 ### Assembly Program
 
- 
+```asm
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    VALUE1 DW 1111H
+    VALUE2 DW 2222H
+
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    MOV AX, VALUE1      ; AX = 1111H
+    MOV BX, VALUE2      ; BX = 2222H
+
+    MOV VALUE1, BX      ; VALUE1 = 2222H
+    MOV VALUE2, AX      ; VALUE2 = 1111H
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+END MAIN
+```
+
+Version used in the EasyCPU 8086 simulator (VALUE1 at 0000H holds 1111H, VALUE2 at 0002H holds 2222H, loaded beforehand):
+
+```asm
+MOV AX, [0000H]
+MOV BX, [0002H]
+
+MOV [0000H], BX
+MOV [0002H], AX
+
+HLT
+```
 
 ### Expected Result
 
-  Memory Variable     Before Execution   After Execution
-  ----------------- ------------------ -----------------
-  VALUE1                       `1111H`           `2222H`
-  VALUE2                       `2222H`           `1111H`
+| Memory Variable | Before Execution | After Execution |
+| --- | --- | --- |
+| VALUE1 | `1111H` | `2222H` |
+| VALUE2 | `2222H` | `1111H` |
 
 ### Explanation
 
-  
-------------------------------------------------------------------------
+The 8086 has no instruction that moves one memory location directly to another, so a register is needed as a go-between. Both values are first copied into AX and BX. Then each register is written back to the *other* location, which swaps the contents. The simulator confirms this: AX = 1111H and BX = 2222H after loading, and the memory viewer at 1000:0000 shows `22 22 11 11` afterwards, i.e. VALUE1 = 2222H and VALUE2 = 1111H.
+
+---
 
 ## Procedure
 
-1.  Open an 8086-compatible assembler or emulator.
-2.  Create a new assembly source file.
-3.  Enter and assemble the program for the selected part.
-4.  Correct any syntax or assembler-specific errors.
-5.  Execute the program step by step or run it.
-6.  Inspect the registers and memory variables.
-7.  Record the observed results and compare them with the expected
-    results.
-## Screenshot of the results 
+1. Open an 8086-compatible assembler or emulator.
+2. Create a new assembly source file.
+3. Enter and assemble the program for the selected part.
+4. Correct any syntax or assembler-specific errors.
+5. Execute the program step by step or run it.
+6. Inspect the registers and memory variables.
+7. Record the observed results and compare them with the expected results.
 
+## Screenshot of the results
 
+### Part (b): register transfer and memory store (AX = BX = 1234H, memory 34 12)
+
+![Part b result](img/part_b_register_transfer.png)
+
+### Part (c): exchange of two memory values (memory 22 22 11 11)
+
+![Part c result](img/part_c_exchange.png)
 
 ## Result
 
-The 8086 architecture and the functions of the BIU and EU were studied.
-The assembly programs demonstrate 16-bit register transfer with memory
-storage and the exchange of two 16-bit memory values.
-
+The 8086 architecture and the functions of the BIU and EU were studied. The assembly programs demonstrate 16-bit register transfer with memory storage and the exchange of two 16-bit memory values. The observed register and memory contents matched the expected results in both cases.
 
 ## Viva Voce Questions
 
-1.  What is the function of the BIU in the 8086?
-2.  What is the role of the EU?
-3.  Why does the 8086 use a 6-byte instruction queue?
-4.  What is the maximum physical memory address space of the 8086?
-5.  What is the difference between a register and a memory variable?
-6.  Does the `MOV` instruction change the source operand?
-7.  Why are registers used when exchanging two memory values?
-8.  What is the purpose of the DS segment register?
+1. **What is the function of the BIU in the 8086?**
+   The BIU handles all bus activity: it generates the 20-bit physical address, fetches instructions into the queue, and reads/writes memory and I/O ports for the EU.
 
- 
-` 
+2. **What is the role of the EU?**
+   The EU decodes and executes instructions, using the ALU, general-purpose registers and flag register. It asks the BIU whenever it needs memory or I/O access.
+
+3. **Why does the 8086 use a 6-byte instruction queue?**
+   It lets the BIU prefetch the next instructions while the EU is executing the current one (pipelining), so the processor wastes fewer cycles waiting for instruction fetches.
+
+4. **What is the maximum physical memory address space of the 8086?**
+   1 MB (2^20 bytes), because of the 20-bit address bus.
+
+5. **What is the difference between a register and a memory variable?**
+   A register is a small storage location inside the CPU and is accessed very quickly. A memory variable lives in RAM, is addressed through a segment and offset, and is slower to access.
+
+6. **Does the `MOV` instruction change the source operand?**
+   No. MOV copies data to the destination and leaves the source unchanged (and it does not affect the flags).
+
+7. **Why are registers used when exchanging two memory values?**
+   The 8086 cannot move memory to memory directly in a single MOV, so the values must pass through registers (AX and BX here) to be swapped.
+
+8. **What is the purpose of the DS segment register?**
+   DS holds the base (segment) address of the data segment. The offset of a variable is added to DS (shifted left by 4 bits) to form the 20-bit physical address of data.
